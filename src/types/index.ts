@@ -1,4 +1,4 @@
-export type ModelId = 'claude-sonnet-4-5-20250514' | 'claude-opus-4-5-20251101' | 'claude-3-5-haiku-20241022';
+export type ModelId = 'claude-sonnet-4-20250514' | 'claude-opus-4-20250514' | 'claude-3-5-haiku-20241022';
 
 export interface Model {
   id: ModelId;
@@ -9,14 +9,14 @@ export interface Model {
 
 export const MODELS: Model[] = [
   {
-    id: 'claude-sonnet-4-5-20250514',
-    name: 'Claude Sonnet 4.5',
+    id: 'claude-sonnet-4-20250514',
+    name: 'Claude Sonnet 4',
     inputCostPer1k: 0.003,
     outputCostPer1k: 0.015,
   },
   {
-    id: 'claude-opus-4-5-20251101',
-    name: 'Claude Opus 4.5',
+    id: 'claude-opus-4-20250514',
+    name: 'Claude Opus 4',
     inputCostPer1k: 0.015,
     outputCostPer1k: 0.075,
   },

@@ -20,7 +20,7 @@ interface UseChatReturn {
   currentModel: ModelId;
 }
 
-export function useChat(apiKey: string, initialModel: ModelId): UseChatReturn {
+export function useChat(initialModel: ModelId, apiKey?: string): UseChatReturn {
   const [conversation, setConversation] = useState<Conversation>(() => {
     const saved = getConversation();
     if (saved) return saved;
@@ -82,7 +82,7 @@ export function useChat(apiKey: string, initialModel: ModelId): UseChatReturn {
 
       try {
         const messagesForApi = [...conversation.messages, userMessage];
-        const response = await sendMessage(apiKey, conversation.model, messagesForApi);
+        const response = await sendMessage(conversation.model, messagesForApi, apiKey);
 
         const assistantMessage: Message = {
           id: generateId(),
@@ -104,7 +104,7 @@ export function useChat(apiKey: string, initialModel: ModelId): UseChatReturn {
         setIsLoading(false);
       }
     },
-    [apiKey, conversation.messages, conversation.model, isLoading]
+    [conversation.messages, conversation.model, isLoading, apiKey]
   );
 
   const clearChat = useCallback(() => {

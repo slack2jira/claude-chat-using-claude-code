@@ -61,7 +61,7 @@ export function getSettings(): AppSettings {
   const stored = localStorage.getItem(STORAGE_KEYS.SETTINGS);
   const defaults: AppSettings = {
     apiKey: '',
-    selectedModel: 'claude-sonnet-4-5-20250514',
+    selectedModel: 'claude-sonnet-4-20250514',
     darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
   };
 

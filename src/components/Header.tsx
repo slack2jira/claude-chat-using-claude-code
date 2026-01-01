@@ -1,4 +1,4 @@
-import { Sun, Moon, Trash2, Download, FileJson, FileText } from 'lucide-react';
+import { Sun, Moon, Trash2, Download, FileJson, FileText, Wifi, WifiOff } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import type { ModelId, TokenUsage, Conversation } from '../types';
 import { ModelSelector } from './ModelSelector';
@@ -7,8 +7,6 @@ import { ApiKeyInput } from './ApiKeyInput';
 import { exportAsJson, exportAsMarkdown, downloadFile } from '../utils/storage';
 
 interface HeaderProps {
-  apiKey: string;
-  onApiKeyChange: (key: string) => void;
   model: ModelId;
   onModelChange: (model: ModelId) => void;
   isDarkMode: boolean;
@@ -17,11 +15,12 @@ interface HeaderProps {
   tokenUsage: TokenUsage;
   conversation: Conversation;
   isLoading: boolean;
+  backendStatus: 'checking' | 'connected' | 'disconnected';
+  apiKey: string;
+  onApiKeyChange: (key: string) => void;
 }
 
 export function Header({
-  apiKey,
-  onApiKeyChange,
   model,
   onModelChange,
   isDarkMode,
@@ -30,6 +29,9 @@ export function Header({
   tokenUsage,
   conversation,
   isLoading,
+  backendStatus,
+  apiKey,
+  onApiKeyChange,
 }: HeaderProps) {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
@@ -61,6 +63,28 @@ export function Header({
 
   const hasMessages = conversation.messages.length > 0;
 
+  const getStatusColor = () => {
+    switch (backendStatus) {
+      case 'connected':
+        return 'text-green-500';
+      case 'disconnected':
+        return 'text-red-500';
+      default:
+        return 'text-yellow-500';
+    }
+  };
+
+  const getStatusTitle = () => {
+    switch (backendStatus) {
+      case 'connected':
+        return 'Connected to backend';
+      case 'disconnected':
+        return 'Backend disconnected';
+      default:
+        return 'Connecting to backend...';
+    }
+  };
+
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3">
@@ -68,11 +92,14 @@ export function Header({
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-semibold text-foreground">Claude Chat</h1>
             <ModelSelector value={model} onChange={onModelChange} disabled={isLoading} />
+            <div className={`flex items-center gap-1 ${getStatusColor()}`} title={getStatusTitle()}>
+              {backendStatus === 'connected' ? <Wifi size={16} /> : <WifiOff size={16} />}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <ApiKeyInput value={apiKey} onChange={onApiKeyChange} />
-
+            {apiKey && <span className="text-xs text-green-500">Key set</span>}
             <TokenCounter usage={tokenUsage} />
 
             <div className="flex items-center gap-1">
