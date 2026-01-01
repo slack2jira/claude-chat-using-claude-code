@@ -9,6 +9,12 @@ import {
   clearConversation,
 } from '../utils/storage';
 
+const DEFAULT_MODEL: ModelId = 'claude-sonnet-4-20250514';
+
+function isValidModel(model: string): model is ModelId {
+  return MODELS.some((m) => m.id === model);
+}
+
 interface UseChatReturn {
   messages: Message[];
   isLoading: boolean;
@@ -23,12 +29,21 @@ interface UseChatReturn {
 export function useChat(initialModel: ModelId, apiKey?: string): UseChatReturn {
   const [conversation, setConversation] = useState<Conversation>(() => {
     const saved = getConversation();
-    if (saved) return saved;
+    if (saved) {
+      // Validate the saved model - if invalid, use the initialModel or default
+      const validModel = isValidModel(saved.model) ? saved.model : (isValidModel(initialModel) ? initialModel : DEFAULT_MODEL);
+      return {
+        ...saved,
+        model: validModel,
+      };
+    }
 
+    // Validate initialModel as well
+    const validInitialModel = isValidModel(initialModel) ? initialModel : DEFAULT_MODEL;
     return {
       id: generateId(),
       messages: [],
-      model: initialModel,
+      model: validInitialModel,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
